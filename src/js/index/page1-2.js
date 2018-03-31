@@ -2,28 +2,33 @@
     const requestUrl = 'https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg?singermid=001BHDR33FZVZ0&g_tk=1388932902&uin=2306831967&format=json&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5page&needNewCode=1&order=listen&from=h5&num=15&begin=0&_=1522224394762'
     let view = {
         el: '.songs',
+        template: `
+                  <li>
+                      <h3>{{song.songname}}</h3>
+                      <p>
+                        <svg class="icon icon-sq">
+                          <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-sq"></use>
+                        </svg>
+                        {{song.singer}}
+                      </p>
+                      <a class="playButton" href="./song.html?id={{song.id}}&extra=1&&extra2=2">
+                        <svg class="icon icon-play">
+                          <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-play"></use>
+                        </svg>
+                      </a>
+                </li>
+        `,
         init() {
             this.$el = $(this.el)
         },
         render(data) {
             let songs = data
             songs.map((song) => {
-                let $li = $(`
-                 <li>
-                      <h3>${song.songname}</h3>
-                      <p>
-                        <svg class="icon icon-sq">
-                          <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-sq"></use>
-                        </svg>
-                        ${song.singer}
-                      </p>
-                      <a class="playButton" href="#">
-                        <svg class="icon icon-play">
-                          <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-play"></use>
-                        </svg>
-                      </a>
-                </li>
-           `)
+                let $li = $(this.template
+                    .replace('{{song.songname}}', song.songname)
+                    .replace('{{song.singer}}', song.singer)
+                    .replace('{{song.id}}', song.id)
+                )
                 this.$el.find('ol.list').append($li)
             })
 
@@ -39,6 +44,7 @@
             for (let i = 0; i < data.length; i++) {
                 const songInfo = data[i].musicData
                 const o = {
+                    id: songInfo.songid,
                     singer: songInfo.singer[0].name,
                     songname: songInfo.songname,
                 }
